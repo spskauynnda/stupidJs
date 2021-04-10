@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .father {
+        height: 100px;
+        width: 100px;
+        background: red;
+        margin-bottom: 220px;
+    }
+    .child {
+        height : 100px;
+        width: 100px;
+        position: absolute;
+        top: 100px;
+        background: green;
+    }
+    .list {
+
+    }
+    .list li {
+
+    }
+</style>
+<body>
+    <div class="father">
+        <div class="child"></div>
+    </div>
+    <ul class="list">
+        <li><span>1</span></li>
+        <li><span>2</span></li>
+        <li><span>3</span></li>
+        <li><span>4</span></li>
+        <li><span>5</span></li>
+    </ul>
+</body>
+<script>
+    document.querySelectorAll('.father')[0].addEventListener('click', ()=>alert('father'), true)
+    document.querySelectorAll('.child')[0].addEventListener('click', ()=>alert('child'), true)
+    // 利用事件委托一次性挂载所有点击事件
+    document.querySelectorAll('.list')[0].addEventListener('click', (e)=> {
+        for (let item of e.target.parentNode.parentNode.children) {
+            item.children[0].style.background = 'white'
+        }
+        // 另一种写法：
+        // for (let item of document.getElementsByTagName('li')) {
+        //     item.style.background = 'white'
+        // }
+        (e.target).style.background = 'red'
+    })
+    // 跟进：如果误点到span标签之外怎么办
+</script>
+</html>

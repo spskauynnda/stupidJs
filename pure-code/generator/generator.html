@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function* foo(x) {
+        var y = 2 * (yield (x + 1));
+        var z = yield (y / 3);
+        return (x + y + z);
+    }
+
+    let a = foo(5)
+    console.log(a);
+    console.log(a.next());
+    console.log(a);
+
+</script>
+</html>
