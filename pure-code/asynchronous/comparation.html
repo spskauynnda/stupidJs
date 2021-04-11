@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>三种异步方式的对比</title>
+</head>
+<body>
+
+</body>
+<script>
+    /*
+        <Example1>
+        假定某个 DOM 元素上面，部署了一系列的动画
+        前一个动画结束，才能开始后一个
+        如果当中有一个动画出错，就不再往下执行，返回上一个成功执行的动画的返回值
+    */
+
+    /* Promise */
+    /* 比回调函数的写法好很多，但是Promise的API太多，操作本身的语义不明显 */
+
+    function chainAnimationsPromise(elem, animations) {
+        let ret = null
+        let p = Promise.resolve()
+        for (let anim of animations) {
+            p = p.then((val)=>{
+                ret = val
+                return anim(elem)
+            })
+        }
+        return p.catch( e =>{
+            /* 处理错误 */
+        }).then(() => ret)
+    }
+
+    /* Generator */
+    /* Generator语义更清晰，但是调用时需要一个任务运行器spawn
+     * 由于自动执行器spawn本身返回Promise对象，要求yield语句后面的表达式也必须返回一个Promise
+     */
+    function chainAnimationsGenerator(elem, animations) {
+        return spawn(function* () {
+            let ret = null
+            try {
+                for (let anim of animations) {
+                    ret = yield anim(elem)
+                }
+            } catch(e) {
+                /* 处理错误 */
+            }
+            return ret
+        })
+    }
+
+
+    /* Async */
+    async function chainAnimationsAsync(elem, animations) {
+        let ret = null
+        try {
+            for (let anim of animations) {
+                ret = await anim(elem)
+            }
+        } catch(e) {
+            /* 处理错误 */
+        }
+        return ret
+    }
+
+
+    /*
+        <Example2>
+        按顺序完成异步操作
+    */
+
+    /* Promise 继发 */
+    function loginOrder1(urls) {
+        const textPromises = url.map(url => {
+            return fetch(url).then(response => response.text())
+        })
+        textPromises.reduce((chain, textPromise) => {
+            return chain.then(() => textPromise)
+                    .then(text => console.log(text))
+        }, Promise.resolve())
+    }
+
+    /* Async 继发请求 */
+    async function loginOrder2(urls) {
+        for (let url of urls) {
+            const response = await fetch(url)
+            console.log(await response.text())
+        }
+    }
+
+    /* Async 并发请求，继发输出 */
+    async function loginOrder3(urls) {
+        // map中传入的每个函数都是async函数，async内部继发外部并发
+        const responsePromises = urls.map(async (url)=>{
+            let response = await fetch(url)
+            return response.text()
+        })
+        // 使用for...of/await实现继发按序输出
+        for (let promise of responsePromises) {
+            console.log(await promise)
+        }
+    }
+
+</script>
+</html>
