@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+(()=>{
+    /*
+    * 模式1：原型链
+    * */
+    function Father() {
+        this.name = 'fatherA'
+        this.friends = ['A', 'B']
+    }
+    function Son() {
+
+    }
+    console.log(Son.prototype)
+    Son.prototype = new Father()
+    console.log(Son.prototype)
+    Father.prototype.sayName = function() {
+        console.log(this.name)
+    }
+
+    // 使用原型链继承时，普通类型是私有的，但引用类型的值之间会共享
+    let son1 = new Son()
+    let son2 = new Son()
+    son1.name = 'blink`blink'
+    console.log(son2.name)
+    son1.friends.push('SS')
+    console.log(son2.friends)
+
+})();
+
+(()=>{
+    /*
+    * 模式2：借用构造函数
+    * */
+    function Father(name) {
+        this.name = name
+    }
+    function Son() {
+        Father.call(this, 'Father')  // 继承属性
+        this.age = '29'
+    }
+    let son1 = new Son()
+    console.log(son1.age, son1.name)
+
+})();
+
+(()=>{
+    /*
+    * 模式3：组合继承
+    * */
+    function Father(name) {
+        this.name = name
+        this.friends = ['SS']
+    }
+    Father.prototype.sayName = function() {
+        console.log(this.name)
+    }
+    function Son() {
+        Father.call(this, 'Father')  // 这句使得属性从原型继承到了Son中，而不是共享的
+        this.age = '29'              // 私有属性
+    }
+    Son.prototype = new Father()
+    Son.prototype.constructor = Son
+    Son.prototype.sayAge = function() {
+        console.log(this.age)
+    }
+
+    let son1 = new Son()
+    son1.sayName()
+    son1.sayAge()
+    let son2 = new Son()
+    son1.friends.push('Blink`Blink')
+    console.log(son1.friends)
+    console.log(son2.friends)
+})();
+
+</script>
+</html>

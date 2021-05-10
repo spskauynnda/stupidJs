@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+(()=>{
+    /*
+    * 模式一：工厂模式
+    * 优点：解决了创建多个相似对象的问题
+    * 缺点：无法区分对象的类型
+    * */
+
+    console.log('-----模式1：工厂模式-----')
+
+    let createPerson = (name) => {
+        let o = {}
+        o.name = name
+        o.sayName = function () {
+            console.log(this.name)   // TODO 此处this.name与name有什么区别？ 为什么这里没有用箭头函数？
+        }
+        return o
+    }
+
+    let jasonP = createPerson('jason')
+    let kettyP = createPerson('ketty')
+    jasonP.sayName()
+    kettyP.sayName()
+})();
+
+(()=>{
+    /*
+    * 模式二：构造函数模式
+    * 优点：能够区分对象的类型，自动绑定this
+    * 缺点：浪费资源——每个方法都要在每个实例上重新创建一遍
+    *     （当然也可以不在构造函数内部定义方法，只定义一个变量，变量指向一个作用域链中定义好的公共方法，
+    *      但这样就反而失去了函数的封装性）
+    * */
+
+    console.log('-----模式2：构造函数模式-----')
+
+    function Person(name) {
+        this.name = name
+        this.sayName = function() {
+            console.log(this.name)               // TODO 这里如果用name而不是this.name会引发什么bug
+        }
+        this.changeName = function(newName) {
+            this.name = newName
+        }
+        // 此处没有return
+    }
+
+    let jason = new Person('jason')
+    jason.changeName('ketty')
+    jason.sayName()
+    console.log('检测构造函数', jason.constructor === Person, jason.constructor === Object)
+    console.log('检测对象类型', jason instanceof Person, jason instanceof Object)
+
+})();
+
+(()=>{
+    /*
+    * 模式三：原型模式
+    * 优点：所有实例共享prototype方法和属性
+    * 缺点：其属性和方法都是共享的，无法保存实例私有的属性
+    * 特性：原型具有动态性，哪怕实例是先创建的，修改原型后实例上也会反映出来
+    * */
+
+    console.log('-----模式3：原型模式-----')
+
+    function Person() { }
+    Person.prototype.name = 'youKnowWho'
+    Person.prototype.sayName = function () {
+        console.log(this.name)
+    }
+    // 此处如果使用对象字面量来定义prototype，constructor属性就不再指向Person了
+
+    let jason = new Person()
+    jason.sayName()
+    console.log('实例的__proto__指向原型对象', jason.__proto__)
+    console.log('构造函数的prototype指向原型对象', jason.constructor.prototype)
+    console.log('原型对象的原型对象和构造函数', jason.__proto__, jason.__proto__.constructor)
+    console.log('实例和构造函数的原型对象是一个东西', jason.__proto__ === jason.constructor.prototype)
+    console.log('实例和原型对象的构造函数是一个东西', jason.constructor === jason.__proto__.constructor)
+
+    // obj.hasOwnProperty(propName)
+    console.log(jason.hasOwnProperty('name'))
+})();
+
+(()=>{
+    /*
+    * 模式四：组合模式   同时使用构造+原型
+    * */
+    console.log('-----模式4：组合模式-----')
+})();
+
+(()=>{
+    /*
+    * 模式五：动态原型模式
+    * 优点：
+    * 缺点：
+    * */
+
+    console.log('-----模式5：动态原型模式-----')
+
+    function Person(name) {
+        this.name = name
+        if (typeof this.sayName != 'function') {
+            Person.prototype.sayName = function() {
+                console.log(this.name)
+            }
+        }
+    }
+    let jason = new Person('jason')
+    jason.sayName()
+})();
+
+(()=>{
+    /*
+    * 模式六：寄生构造函数模式
+    * 优点：可以改造构造函数的返回值
+    * 缺点：无法使用instanceof来确定对象的类型
+    * */
+    console.log('-----模式6：寄生构造函数模式-----')
+
+    function Person(name, age, job) {
+        var o = {}
+        o.name = name
+        o.age = age
+        o.job = job
+        o.sayName = function() {
+            console.log(this.name)
+        }
+        return o
+    }
+
+    var friend = new Person("Tom", 29, "Engineer")
+    friend.sayName()
+})();
+
+</script>
+</html>
