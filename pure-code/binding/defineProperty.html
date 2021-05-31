@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>defineProperty</title>
+</head>
+<body>
+<input type="text">
+</body>
+<script>
+    // 未完成
+    const Mind = {}
+    let _n = ''
+    Object.defineProperty(Mind, 'name', {
+        get: () => {
+            return `Call me ${_n}`
+        },
+        set: (val) => {
+            _n = val
+            console.log(`Set my name as ${_n}`)
+        }
+    })
+    Mind.name = 'hello'
+    console.log(Mind)
+</script>
+</html>

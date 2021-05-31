@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>basicRealization</title>
+</head>
+<body>
+    <input id="inputx" type="text" />
+    <p id="px"></p>
+</body>
+<script>
+(function() {
+    const $id = (id) => document.getElementById(id)
+    const _obj = {
+        _val: '',
+        get p() {
+            return this._val
+        },
+        set p(val) {
+            $id('inputx').value = val
+            $id('px').innerHTML = val
+        }
+    }
+   /*
+    * 使用keyup会有体感上的短暂延迟，但是使用keydown会导致无法捕获按下的信息
+    * 所以使用异步手段延迟捕获输入的信息
+    * 因此使用时要注意可能会产生没有预料到的bug
+    */
+    document.addEventListener('keydown', function(e){
+        setTimeout(()=>_obj.p = e.target.value, 0)
+    })
+    // document.addEventListener('keyup', function(e){
+    //     _obj.p = e.target.value
+    // })
+})()
+
+
+</script>
+</html>
